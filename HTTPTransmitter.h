@@ -13,7 +13,7 @@ private:
   Config config;
 
 public:
-  HTTPResponseDto sendHeartBeat();
+  HTTPResponseDto sendHeartBeat(int &status);
   HTTPResponseDto sendStatusChange(int &status);
   HTTPTransmitter(Config &config);
   ~HTTPTransmitter();

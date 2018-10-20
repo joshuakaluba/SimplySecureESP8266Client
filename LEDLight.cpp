@@ -14,14 +14,7 @@ void LEDLight::activate()
 
 void LEDLight::flash()
 {
-    if (lightOn)
-    {
-        digitalWrite(config.getLEDPin(), LOW);
-    }
-    else
-    {
-        digitalWrite(config.getLEDPin(), HIGH);
-    }
+    digitalWrite(config.getLEDPin(),lightOn? LOW : HIGH);
 
     lightOn = !lightOn;
 }

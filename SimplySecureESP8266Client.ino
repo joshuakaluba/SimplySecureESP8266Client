@@ -33,18 +33,21 @@ void setup()
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
-    Serial.println("Waiting for connection");
+    Serial.println("Waiting for connection...");
   }
 
-  bool result = startup.sendBootMessage(magneticSensor.getGpioPinStatus());
+  HTTPResponseDto result = startup.sendBootMessage(magneticSensor.getGpioPinStatus());
 
-  if (result == true)
+  if (result.getStatusCode() == 200)
   {
     buzzer.acknowledgeBoot();
+    Serial.println(result.getResonsePayload());
   }
   else
   {
     buzzer.soundAlarm();
+    Serial.println(result.getStatusCode());
+    Serial.println(result.getResonsePayload());
   }
 }
 
@@ -56,14 +59,15 @@ void loop()
 
   if (state != status)
   {
-    HTTPResponseDto response = httpTransmitter.sendStatusChange(status);
-
     Serial.println(status ? "Closed.." : "Opened..");
+    
+    HTTPResponseDto response = httpTransmitter.sendStatusChange(status);
+    
     Serial.println(response.getResonsePayload());
 
     //determine if sound alarm or not
 
-    if (!firstLoop)
+    if (!firstLoop && response.soundAlarm())
     {
       buzzer.soundAlarm();
     }
@@ -81,7 +85,10 @@ void loop()
 
   if (seconds == config.getHeartBeatFrequency())
   {
-    httpTransmitter.sendHeartBeat();
+    Serial.println("Sending heartbeat");    
+    HTTPResponseDto response = httpTransmitter.sendHeartBeat(status);
+    Serial.println(response.getResonsePayload());
+    
     seconds = 0;
   }
 
