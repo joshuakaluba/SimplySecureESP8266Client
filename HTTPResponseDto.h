@@ -12,6 +12,7 @@ private:
 
 public:
   int getStatusCode();
+  bool soundAlarm();
   String getResonsePayload();
   HTTPResponseDto(int statusCode, String responsePayload);
   ~HTTPResponseDto();

@@ -8,6 +8,11 @@ int HTTPResponseDto::getStatusCode()
     return statusCode;
 }
 
+bool HTTPResponseDto::soundAlarm()
+{
+    return responsePayload.indexOf("true")>0;
+}
+
 String HTTPResponseDto::getResonsePayload()
 {
     return responsePayload;
