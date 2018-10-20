@@ -7,11 +7,12 @@
 class Config
 {
 private:
-  String wirelessNetworkName = "xxxxx";
-  String wirelessNetworkPassword = "xxxxx";
-  String localServerUrl = "http:192.168.2.210:5000";
-  String moduleId = "abcde-1231-2131-1232";
-  int heartBeatFrequency = 20;
+  String wirelessNetworkName = "networkname";
+  String wirelessNetworkPassword = "password";
+  String localServerUrl = "http://192.168.2.10:18000";
+  String moduleId = "4711a20e-b0ff-4461-89dc-c5479e9c5ef7";
+  
+  int heartBeatFrequency = 30;
   int buzzerPin = 12;
   int ledPin = 4;
   int magneticSensorPin = 2;
