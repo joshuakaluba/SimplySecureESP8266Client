@@ -1,5 +1,5 @@
 #include "Config.h"
-#include "HTTPResponseDto.h"
+#include "ResponseDto.h"
 
 #ifndef STARTUP
 #define STARTUP
@@ -10,7 +10,7 @@ private:
   Config config;
 
 public:
-  HTTPResponseDto sendBootMessage(int status);
+  ResponseDto sendBootMessage(int status);
   Startup(Config &config);
   ~Startup();
 };

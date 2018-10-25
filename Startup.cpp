@@ -4,11 +4,11 @@
 #include <Arduino.h>
 #include "Config.h"
 #include "HTTPTransmitter.h"
-#include "HTTPResponseDto.h"
+#include "ResponseDto.h"
 
 Startup::Startup(Config &config) : config(config){};
 
-HTTPResponseDto Startup::sendBootMessage(int status)
+ResponseDto Startup::sendBootMessage(int status)
 {
   if (WiFi.status() == WL_CONNECTED)
   {
@@ -30,12 +30,12 @@ HTTPResponseDto Startup::sendBootMessage(int status)
 
     http.end();
 
-    HTTPResponseDto response(httpCode, payload);
+    ResponseDto response(httpCode, payload);
 
     return response;
   }
 
-  return HTTPResponseDto(500, "An error occurred");
+  return ResponseDto(500, "An error occurred");
 }
 
 Startup::~Startup() {}

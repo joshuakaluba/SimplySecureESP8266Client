@@ -1,17 +1,16 @@
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
+#include <Ticker.h>
 #include "Config.h"
 #include "Startup.h"
 #include "PiezoBuzzer.h"
 #include "LEDLight.h"
 #include "MagneticSensor.h"
 #include "HTTPTransmitter.h"
-#include "HTTPResponseDto.h"
+#include "ResponseDto.h"
 
-int state = -1;
-int count = 0;
-int seconds = 0;
-bool firstLoop = true;
+int previousState = -1;
+bool sendHeartBeat = false;
 
 Config config;
 Startup startup(config);
@@ -19,6 +18,21 @@ PiezoBuzzer buzzer(config);
 LEDLight ledLight(config);
 MagneticSensor magneticSensor(config);
 HTTPTransmitter httpTransmitter(config);
+
+Ticker ticker;
+
+void heartbeatHandler()
+{
+  sendHeartBeat = true;
+}
+
+void checkTriggered(ResponseDto &response)
+{
+  if (response.alarmTriggered())
+  {
+    buzzer.soundAlarm();
+  }
+}
 
 void setup()
 {
@@ -36,63 +50,56 @@ void setup()
     Serial.println("Waiting for connection...");
   }
 
-  HTTPResponseDto result = startup.sendBootMessage(magneticSensor.getGpioPinStatus());
+  ResponseDto response;
 
-  if (result.getStatusCode() == 200)
+  while (!response.isSuccessful())
   {
-    buzzer.acknowledgeBoot();
-    Serial.println(result.getResonsePayload());
+    previousState = magneticSensor.getGpioPinState();
+
+    response = startup.sendBootMessage(previousState);
+
+    if (response.isSuccessful())
+    {
+      buzzer.acknowledgeBoot();
+      continue;
+    }
+
+    delay(500);
+    Serial.println("Waiting to boot...");
   }
-  else
-  {
-    buzzer.soundAlarm();
-    Serial.println(result.getStatusCode());
-    Serial.println(result.getResonsePayload());
-  }
+
+  ticker.attach(config.getHeartBeatFrequency(), heartbeatHandler);
+
+  Serial.println("Booting complete");
 }
 
 void loop()
 {
   delay(50);
 
-  int status = magneticSensor.getGpioPinStatus();
+  int currentState = magneticSensor.getGpioPinState();
 
-  if (state != status)
+  if (previousState != currentState)
   {
-    Serial.println(status ? "Closed.." : "Opened..");
-    
-    HTTPResponseDto response = httpTransmitter.sendStatusChange(status);
-    
-    Serial.println(response.getResonsePayload());
+    Serial.println(currentState ? "Door Closed.." : "Door Opened..");
 
-    //determine if sound alarm or not
+    ResponseDto response = httpTransmitter.sendStatusChange(currentState);
 
-    if (!firstLoop && response.soundAlarm())
-    {
-      buzzer.soundAlarm();
-    }
+    checkTriggered(response);
+
+    previousState = currentState;
   }
 
-  state = status;
-
-  count++;
-
-  if (count == 20)
+  if (sendHeartBeat == true)
   {
-    count = 0;
-    seconds++;
-  }
+    ResponseDto response = httpTransmitter.sendHeartBeat(currentState);
 
-  if (seconds == config.getHeartBeatFrequency())
-  {
-    Serial.println("Sending heartbeat");    
-    HTTPResponseDto response = httpTransmitter.sendHeartBeat(status);
-    Serial.println(response.getResonsePayload());
-    
-    seconds = 0;
+    checkTriggered(response);
+
+    Serial.println("Heart beat sent");
+
+    sendHeartBeat = false;
   }
 
   ledLight.flash();
-
-  firstLoop = false;
 }

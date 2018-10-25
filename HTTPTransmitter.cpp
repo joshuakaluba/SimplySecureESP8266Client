@@ -3,11 +3,11 @@
 #include <Arduino.h>
 #include "Config.h"
 #include "HTTPTransmitter.h"
-#include "HTTPResponseDto.h"
+#include "ResponseDto.h"
 
-HTTPTransmitter::HTTPTransmitter(Config &config) : config(config) {};
+HTTPTransmitter::HTTPTransmitter(Config &config) : config(config){};
 
-HTTPResponseDto HTTPTransmitter::sendHeartBeat(int &status)
+ResponseDto HTTPTransmitter::sendHeartBeat(int &status)
 {
   if (WiFi.status() == WL_CONNECTED)
   {
@@ -29,15 +29,15 @@ HTTPResponseDto HTTPTransmitter::sendHeartBeat(int &status)
 
     http.end();
 
-    HTTPResponseDto response(httpCode, payload);
+    ResponseDto response(httpCode, payload);
 
     return response;
   }
 
-  return HTTPResponseDto(500, "An error occurred");
+  return ResponseDto(500, "An error occurred");
 }
 
-HTTPResponseDto HTTPTransmitter::sendStatusChange(int &status)
+ResponseDto HTTPTransmitter::sendStatusChange(int &status)
 {
   if (WiFi.status() == WL_CONNECTED)
   {
@@ -59,12 +59,12 @@ HTTPResponseDto HTTPTransmitter::sendStatusChange(int &status)
 
     http.end();
 
-    HTTPResponseDto response(httpCode, payload);
+    ResponseDto response(httpCode, payload);
 
     return response;
   }
 
-  return HTTPResponseDto(500, "An error occurred");
+  return ResponseDto(500, "An error occurred");
 }
 
 HTTPTransmitter::~HTTPTransmitter() {}

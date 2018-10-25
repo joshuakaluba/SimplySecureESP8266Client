@@ -2,7 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <Arduino.h>
 #include "Config.h"
-#include "HTTPResponseDto.h"
+#include "ResponseDto.h"
 
 #ifndef HTTPTRANSMITTER
 #define HTTPTRANSMITTER
@@ -13,8 +13,8 @@ private:
   Config config;
 
 public:
-  HTTPResponseDto sendHeartBeat(int &status);
-  HTTPResponseDto sendStatusChange(int &status);
+  ResponseDto sendHeartBeat(int &status);
+  ResponseDto sendStatusChange(int &status);
   HTTPTransmitter(Config &config);
   ~HTTPTransmitter();
 };

@@ -10,7 +10,7 @@ void MagneticSensor::activate()
     pinMode(config.getMagneticSensorPin(), OUTPUT);
 }
 
-int MagneticSensor::getGpioPinStatus()
+int MagneticSensor::getGpioPinState()
 {
     return digitalRead(config.getMagneticSensorPin());
 }

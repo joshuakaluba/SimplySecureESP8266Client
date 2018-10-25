@@ -8,7 +8,7 @@
 class MagneticSensor : public BaseComponent
 {
 public:
-  int getGpioPinStatus();
+  int getGpioPinState();
   void activate();
   MagneticSensor(Config &config);
   ~MagneticSensor();
