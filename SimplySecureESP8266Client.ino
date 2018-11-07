@@ -61,6 +61,10 @@ void setup()
     if (response.isSuccessful())
     {
       buzzer.acknowledgeBoot();
+
+      delay(3000);
+
+      checkTriggered(response);
       continue;
     }
 
@@ -83,7 +87,7 @@ void loop()
   {
     Serial.println(currentState ? "Door Closed.." : "Door Opened..");
 
-    ResponseDto response = httpTransmitter.sendStatusChange(currentState);
+    ResponseDto response = httpTransmitter.sendStateChange(currentState);
 
     checkTriggered(response);
 
