@@ -37,13 +37,13 @@ ResponseDto HTTPTransmitter::sendHeartBeat(int &status)
   return ResponseDto(500, "An error occurred");
 }
 
-ResponseDto HTTPTransmitter::sendStatusChange(int &status)
+ResponseDto HTTPTransmitter::sendStateChange(int &status)
 {
   if (WiFi.status() == WL_CONNECTED)
   {
     HTTPClient http;
 
-    String serverEndpoint = config.getLocalServerUrl() + "/api/statuschange";
+    String serverEndpoint = config.getLocalServerUrl() + "/api/statechange";
 
     String sensorState = (status > 0) ? "1" : "0";
 

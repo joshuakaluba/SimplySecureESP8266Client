@@ -14,7 +14,7 @@ private:
 
 public:
   ResponseDto sendHeartBeat(int &status);
-  ResponseDto sendStatusChange(int &status);
+  ResponseDto sendStateChange(int &status);
   HTTPTransmitter(Config &config);
   ~HTTPTransmitter();
 };
