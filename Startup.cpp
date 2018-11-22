@@ -18,7 +18,7 @@ ResponseDto Startup::sendBootMessage(int status)
 
     String sensorState = (status > 0) ? "1" : "0";
 
-    String json = "{ \"ModuleId\":\"" + config.getModuleId() + "\", \"Status\":" + sensorState + " }";
+    String json = "{ \"ModuleId\":\"" + config.getModuleId() + "\", \"State\":" + sensorState + " }";
 
     http.begin(serverEndpoint);
 
