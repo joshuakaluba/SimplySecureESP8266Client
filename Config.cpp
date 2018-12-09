@@ -21,9 +21,9 @@ String Config::getModuleId() const
     return moduleId;
 }
 
-int Config::getHeartBeatFrequency() const
+int Config::getHeartbeatFrequency() const
 {
-    return heartBeatFrequency;
+    return heartbeatFrequency;
 }
 
 int Config::getBuzzerPin() const
