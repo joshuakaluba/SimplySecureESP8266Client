@@ -2,28 +2,26 @@
 #include <ESP8266WiFi.h>
 #include <Ticker.h>
 #include "Config.h"
-#include "Startup.h"
 #include "PiezoBuzzer.h"
 #include "LEDLight.h"
 #include "MagneticSensor.h"
-#include "HTTPTransmitter.h"
+#include "HTTPRequestHelper.h"
 #include "ResponseDto.h"
 
 int previousState = -1;
-bool sendHeartBeat = false;
+bool sendHeartbeat = false;
 
 Config config;
-Startup startup(config);
 PiezoBuzzer buzzer(config);
 LEDLight ledLight(config);
 MagneticSensor magneticSensor(config);
-HTTPTransmitter httpTransmitter(config);
+HTTPRequestHelper httpRequestHelper(config);
 
 Ticker ticker;
 
 void heartbeatHandler()
 {
-  sendHeartBeat = true;
+  sendHeartbeat = true;
 }
 
 void checkTriggered(ResponseDto &response)
@@ -32,6 +30,7 @@ void checkTriggered(ResponseDto &response)
   {
     buzzer.soundAlarm();
   }
+  Serial.println(response.toString());
 }
 
 void setup()
@@ -52,27 +51,16 @@ void setup()
 
   ResponseDto response;
 
-  while (!response.isSuccessful())
+  previousState = magneticSensor.getGpioPinState();
+
+  response = httpRequestHelper.sendBootMessage(previousState);
+
+  if (response.isSuccessful())
   {
-    previousState = magneticSensor.getGpioPinState();
-
-    response = startup.sendBootMessage(previousState);
-
-    if (response.isSuccessful())
-    {
-      buzzer.acknowledgeBoot();
-
-      delay(3000);
-
-      checkTriggered(response);
-      continue;
-    }
-
-    delay(500);
-    Serial.println("Waiting to boot...");
+    buzzer.acknowledgeBoot();
   }
 
-  ticker.attach(config.getHeartBeatFrequency(), heartbeatHandler);
+  ticker.attach(config.getHeartbeatFrequency(), heartbeatHandler);
 
   Serial.println("Booting complete");
 }
@@ -87,22 +75,21 @@ void loop()
   {
     Serial.println(currentState ? "Door Closed.." : "Door Opened..");
 
-    ResponseDto response = httpTransmitter.sendStateChange(currentState);
+    ResponseDto response = httpRequestHelper.sendModuleEvent(currentState);
 
     checkTriggered(response);
 
     previousState = currentState;
   }
 
-  if (sendHeartBeat == true)
+  if (sendHeartbeat == true)
   {
-    ResponseDto response = httpTransmitter.sendHeartBeat(currentState);
+    ResponseDto response = httpRequestHelper.sendHeartbeat(currentState);
 
     checkTriggered(response);
 
-    Serial.println("Heart beat sent");
-
-    sendHeartBeat = false;
+    Serial.println("Heartbeat sent");
+    sendHeartbeat = false;
   }
 
   ledLight.flash();
