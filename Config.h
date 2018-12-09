@@ -10,9 +10,9 @@ private:
   String wirelessNetworkName = "xxxxx";
   String wirelessNetworkPassword = "xxxxx";
   String localServerUrl = "http://192.168.2.10:18000";
-  String moduleId = "4711a20e-b0ff-4461-89da-c5479e9c5ef7";
-  
-  int heartBeatFrequency = 30;
+  String moduleId = "89568b1c-1cdb-44c3-8676-3a077723e1cb";
+
+  int heartbeatFrequency = 35;
   int buzzerPin = 12;
   int ledPin = 4;
   int magneticSensorPin = 2;
@@ -25,7 +25,7 @@ public:
   String getWirelessNetworkPassword() const;
   String getLocalServerUrl() const;
   String getModuleId() const;
-  int getHeartBeatFrequency() const;
+  int getHeartbeatFrequency() const;
   int getBuzzerPin() const;
   int getLEDPin() const;
   int getMagneticSensorPin() const;
