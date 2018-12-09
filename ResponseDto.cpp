@@ -15,6 +15,11 @@ bool ResponseDto::alarmTriggered()
   return responsePayload.indexOf("ALARM_FLAG") > 0;
 }
 
+String ResponseDto::toString()
+{
+  return responsePayload;
+}
+
 bool ResponseDto::isSuccessful()
 {
   return getStatusCode() == 200;

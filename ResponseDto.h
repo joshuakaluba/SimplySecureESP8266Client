@@ -15,6 +15,7 @@ public:
   bool alarmTriggered();
   bool isSuccessful();
   String getResonsePayload();
+  String toString();
   ResponseDto();
   ResponseDto(int statusCode, String responsePayload);
   ~ResponseDto();
